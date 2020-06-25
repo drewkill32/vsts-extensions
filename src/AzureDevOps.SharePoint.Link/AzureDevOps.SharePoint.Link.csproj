@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	    <OutputType>Library</OutputType>
+	    <TargetFramework>net472</TargetFramework>
+	    <RootNamespace>AzureDevOps.SharePoint.Link</RootNamespace>
+	    <UserSecretsId>d403b20c-8598-40b8-9272-549f1276484f</UserSecretsId>
+	    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	    <Company>STERIS</Company>
+	    <Product>Uploads files to a SharePoint  document library</Product>
+	    <Version>0.6.2</Version>
+	    <PackageReleaseNotes>-fixed issue with relative path</PackageReleaseNotes>
+	    <Description>Adds two PowerShell comannds
+Wrte-SPFile and Write-WPWikiPage</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1608</NoWarn>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Costura.Fody" Version="4.1.0" />
+		<PackageReference Include="PowerShellStandard.Library" Version="5.1.0" />
+		<PackageReference Include="SharePointPnPCoreOnline" Version="3.22.2006.2" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+{
+  "manifestVersion": 1,
+  "id": "upload-sp-files-client-id",
+  "name": "SharePoint File Upload with SharePoint app ClientId/Secret",
+  "version": "0.0.12",
+  "publisher": "nerd-monkey",
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "description": "Uploads file(s) to a SharePoint Document Library or Wiki Page using a Client Id and Client Secret",
+  "categories": ["Azure Pipelines"],
+  "icons": {
+    "default": "images/extension-icon.png"
+  },
+  "files": [
+    {
+      "path": "UploadFile"
+    }
+  ],
+  "contributions": [
+    {
+      "id": "upload-sp-file-task",
+      "type": "ms.vss-distributed-task.task",
+      "targets": ["ms.vss-distributed-task.tasks"],
+      "properties": {
+        "name": "UploadFile"
+      }
+    }
+  ]
+}

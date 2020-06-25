@@ -1,0 +1,87 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "ef01a092-7e7e-4105-a87e-ffa0bf2502bf",
+  "name": "sharepoint-wikipage-upload",
+  "friendlyName": "SharePoint App Id Upload",
+  "description": "Uploads a wiki page to a SharePoint list using a ClientId and Secret.",
+  "helpMarkDown": "",
+  "category": "Utility",
+  "author": "Drew Killion",
+  "version": {
+    "Major": 0,
+    "Minor": 1,
+    "Patch": 0
+  },
+  "instanceNameFormat": "Upload wikiPage to SharePoint list",
+  "inputs": [
+    {
+      "name": "url",
+      "type": "string",
+      "label": "Url",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "A path to a folder or file"
+    },
+    {
+      "name": "clientId",
+      "type": "string",
+      "label": "Client Id",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "SharePoint App Client Id"
+    },
+    {
+      "name": "clientSecret",
+      "type": "string",
+      "label": "Client Secret",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "SharePoint App Client Secret"
+    },
+    {
+      "name": "listId",
+      "type": "string",
+      "label": "List Id",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "GUID id of the SharePoint list"
+    },
+    {
+      "name": "imgPath",
+      "type": "string",
+      "label": "Image Folder Path",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Document library path for storing images. Must exist on the same SharePoint site as the wiki library"
+    },
+    {
+      "name": "script",
+      "type": "filePath",
+      "label": "Script File",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "The path to a single Html file that contains all the scripts and css content."
+    },
+    {
+      "name": "sourceFolder",
+      "type": "filePath",
+      "label": "Source Folder",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "The source folder that the copy pattern(s) will be run from.  Empty is the root of the repo.  Use [variables](https://go.microsoft.com/fwlink/?LinkID=550988) if files are not in the repo. Example: $(agent.builddirectory)"
+    },
+    {
+      "name": "contents",
+      "type": "string",
+      "label": "Contents",
+      "defaultValue": "**",
+      "required": true,
+      "helpMarkDown": "File paths to include as part of the copy. Supports multiple lines of match patterns. [More Information](https://go.microsoft.com/fwlink/?LinkID=708389)"
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "UploadFilesToSharePoint.ps1"
+    }
+  }
+}

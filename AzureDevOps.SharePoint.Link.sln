@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30128.74
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5493A18B-D42D-4BA4-9BE0-A1562351C945}"
+	ProjectSection(SolutionItems) = preProject
+		Build.ps1 = Build.ps1
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDevOps.SharePoint.Link", "src\AzureDevOps.SharePoint.Link\AzureDevOps.SharePoint.Link.csproj", "{7E3F24D1-FF76-4CCC-9918-78BF9991C2DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDevOps.SharePoint.Link.Tests", "src\tests\AzureDevOps.SharePoint.Link.Tests\AzureDevOps.SharePoint.Link.Tests.csproj", "{7486978C-107A-451E-99D3-741C47EB80E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EA6391AC-80C7-4C7F-ABD8-6D0035DBCD8A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E3F24D1-FF76-4CCC-9918-78BF9991C2DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3F24D1-FF76-4CCC-9918-78BF9991C2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3F24D1-FF76-4CCC-9918-78BF9991C2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3F24D1-FF76-4CCC-9918-78BF9991C2DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7486978C-107A-451E-99D3-741C47EB80E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7486978C-107A-451E-99D3-741C47EB80E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7486978C-107A-451E-99D3-741C47EB80E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7486978C-107A-451E-99D3-741C47EB80E4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7486978C-107A-451E-99D3-741C47EB80E4} = {EA6391AC-80C7-4C7F-ABD8-6D0035DBCD8A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E8976B3-64FD-47A9-8F4D-74D77191A7D3}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,9 @@
+.vs/
+**/.env
+**/node_modules/
+**/*.vsix
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
+[Pp]ackages/
+

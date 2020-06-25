@@ -1,0 +1,71 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+  "id": "3fb87413-b0da-4009-b06b-db47fb389431",
+  "name": "sharepoint-appId-upload",
+  "friendlyName": "SharePoint App Id Upload",
+  "description": "Uploads files to a SharePoint document library using a ClientId and Secret.",
+  "helpMarkDown": "",
+  "category": "Utility",
+  "author": "Drew Killion",
+  "version": {
+    "Major": 0,
+    "Minor": 2,
+    "Patch": 6
+  },
+  "instanceNameFormat": "Upload files to SharePoint library $(documentFolder)",
+  "inputs": [
+    {
+      "name": "url",
+      "type": "string",
+      "label": "Url",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "A path to a folder or file"
+    },
+    {
+      "name": "documentFolder",
+      "type": "string",
+      "label": "Document Library",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "The SharePoint Document Library"
+    },
+    {
+      "name": "clientId",
+      "type": "string",
+      "label": "Client Id",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "SharePoint App Client Id"
+    },
+    {
+      "name": "clientSecret",
+      "type": "string",
+      "label": "Client Secret",
+      "defaultValue": "",
+      "required": true,
+      "helpMarkDown": "SharePoint App Client Secret"
+    },
+    {
+      "name": "sourceFolder",
+      "type": "filePath",
+      "label": "Source Folder",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "The source folder that the copy pattern(s) will be run from.  Empty is the root of the repo.  Use [variables](https://go.microsoft.com/fwlink/?LinkID=550988) if files are not in the repo. Example: $(agent.builddirectory)"
+    },
+    {
+      "name": "contents",
+      "type": "multiLine",
+      "label": "Contents",
+      "defaultValue": "**",
+      "required": true,
+      "helpMarkDown": "File paths to include as part of the copy. Supports multiple lines of match patterns. [More Information](https://go.microsoft.com/fwlink/?LinkID=708389)"
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "UploadFilesToSharePoint.ps1"
+    }
+  }
+}
