@@ -18,8 +18,7 @@
     "azure-pipelines-task-lib": "^2.9.6",
     "highlight.js": "^10.1.1",
     "markdown-it": "^11.0.0",
-    "markdown-it-task-lists": "^2.1.1",
-    "node-powershell": "^4.0.0"
+    "markdown-it-task-lists": "^2.1.1"
   },
   "devDependencies": {
     "@types/highlight.js": "^9.12.4",
