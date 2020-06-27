@@ -20,6 +20,7 @@ function Convert-ToHtml {
         [string]$Output,
         [bool] $ImgToBase64
     )
+
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = "node.exe"
     $pinfo.RedirectStandardError = $true
@@ -33,6 +34,7 @@ function Convert-ToHtml {
     do {
         Write-Host $p.StandardOutput.ReadLine();
     } while (!$p.HasExited)
+
     if ($p.ExitCode -eq 0) {
         return Join-Path -Path $Output -ChildPath ([System.IO.Path]::GetFileNameWithoutExtension($MarkdownFile) + ".html")
     }

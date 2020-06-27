@@ -8,14 +8,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc && node ./index.js ../test/sample/sample.md true"
+    "dev": "tsc && node ./index.js ../test/sample/sample.md ../test/output"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node-powershell": "^3.1.1",
-    "azure-pipelines-task-lib": "^2.9.6",
     "highlight.js": "^10.1.1",
     "markdown-it": "^11.0.0",
     "markdown-it-task-lists": "^2.1.1"

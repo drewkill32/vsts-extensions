@@ -6,13 +6,19 @@ import mdtl = require("markdown-it-task-lists");
 function run() {
   try {
     const [fileName, output, toBase64String] = process.argv.slice(2);
-    const toBase64 = toBase64String.toLowerCase() === "true";
+    const toBase64 = toBase64String
+      ? toBase64String.toLowerCase() === "true"
+      : false;
     if (!fs.existsSync(fileName)) {
       throw `file '${fileName}' is not found.`;
     }
-    if (!fs.existsSync(output)) {
-      fs.mkdirSync(output, { recursive: true });
-      console.log(`Created directory ${output}`);
+    if (!output) {
+      throw `out directory was not specified`;
+    }
+    const fullOutput = path.resolve(output);
+    if (!fs.existsSync(fullOutput)) {
+      fs.mkdirSync(fullOutput, { recursive: true });
+      console.log(`Created directory ${fullOutput}`);
     }
 
     const imgTagRegex = /(<img[^>]+src=")([^"]+)("[^>]*>)/g; // Match '<img...src="..."...>'
@@ -34,7 +40,7 @@ function run() {
     var baseName = path.basename(fileName, path.extname(fileName));
     var newFile = path.join(path.resolve(output), baseName + ".html");
     fs.writeFileSync(newFile, html);
-    console.log(`Created ${newFile}`);
+    console.log(`Created '${newFile}'`);
   } catch (error) {
     process.stderr.write(`ERROR: ${error}`);
     process.exitCode = 1;
