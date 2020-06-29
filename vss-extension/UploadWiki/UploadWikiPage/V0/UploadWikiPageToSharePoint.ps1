@@ -95,9 +95,8 @@ try {
                 if ($match.groups[2].Value.StartsWith('http')) {
                     return $match.groups[0].Value;
                 }
-                
                 $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($file.FileName), $match.groups[2].Value))
-                if (!(Test-Path $imgSrc)) {
+                if (Test-Path $imgSrc) {
                     Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null   
                     return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
                 }

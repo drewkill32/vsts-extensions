@@ -5,6 +5,8 @@ some text
 ![monkey](./monkey.jpg)
 
 ![pig](./pig.jpg)
+![badimage](./badimage)
+![badimage](http://placekitten.com/400/200)
 
 ```sql
 
