@@ -63,10 +63,9 @@ try {
     $baseUrl = $uri.Scheme + '://' + $uri.Authority
     $imgPath = $baseUrl + $imgPath
 
-
+    
     $defaultRoot = Resolve-Path -Path $sourceFolder
     $files = Find-VstsMatch -DefaultRoot $defaultRoot -Pattern $contents
-
     $htmlFiles = @()
     #get html contents
     $tmp = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "SpWiki"
@@ -87,29 +86,37 @@ try {
 
     #upload
     foreach ($file in $htmlFiles) {
-        if ($imgPath) {
-            $content = Get-Content $file.HtmlFile
-            $evalutor = {
-                param($match)
+        $content = Get-Content $file.HtmlFile
+        if ($content) {
+            if ($imgPath) {
+                $evalutor = {
+                    param($match)
+                        
+                    if ($match.groups[2].Value.StartsWith('http')) {
+                        return $match.groups[0].Value;
+                    }
+                    $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($file.FileName), $match.groups[2].Value))
+                    if (Test-Path $imgSrc) {
+                        Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null   
+                        return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
+                    }
+                    else {
+                        Write-Warning $"Image $imgSrc was not found"
+                        return $match.groups[0].Value;
+                    }   
+                }
+                $content = [regex]::Replace($content, $pattern, $evalutor)
+                Set-Content -path $file.HtmlFile -value $content
                 
-                if ($match.groups[2].Value.StartsWith('http')) {
-                    return $match.groups[0].Value;
-                }
-                $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($file.FileName), $match.groups[2].Value))
-                if (Test-Path $imgSrc) {
-                    Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null   
-                    return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
-                }
-                else {
-                    Write-Warning $"Image $imgSrc was not found"
-                    return $match.groups[0].Value;
-                }   
             }
-            $content = [regex]::Replace($content, $pattern, $evalutor)
-            Set-Content -path $file.HtmlFile -value $content
+    
+            Write-SpWikiPage -ClientId  $clientId -ClientSecret $clientSecret -File $file.HtmlFile -ListId $listId -Url $url -Script $script
         }
+        else {
+            Write-Warning "$($file.FileName) is empty. File will not be uploaded."
+        }
+        
 
-        Write-SpWikiPage -ClientId  $clientId -ClientSecret $clientSecret -File $file.HtmlFile -ListId $listId -Url $url -Script $script
     }
 }
 finally {
