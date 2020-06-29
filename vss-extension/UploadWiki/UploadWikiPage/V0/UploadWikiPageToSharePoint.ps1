@@ -97,8 +97,14 @@ try {
                 }
                 
                 $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($file.FileName), $match.groups[2].Value))
-                Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null
-                return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
+                if (!(Test-Path $imgSrc)) {
+                    Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null   
+                    return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
+                }
+                else {
+                    Write-Warning $"Image $imgSrc was not found"
+                    return $match.groups[0].Value;
+                }   
             }
             $content = [regex]::Replace($content, $pattern, $evalutor)
             Set-Content -path $file.HtmlFile -value $content
