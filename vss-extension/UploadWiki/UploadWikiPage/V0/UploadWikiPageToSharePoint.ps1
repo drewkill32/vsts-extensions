@@ -6,7 +6,8 @@ param(
     [string] $clientSecret,
     [string] $sourceFolder,
     [string] $contents,
-    [string] $imgPath
+    [string] $imgPath,
+    [string] $script
 )
 
 
@@ -20,7 +21,6 @@ function Convert-ToHtml {
         [string]$Output,
         [bool] $ImgToBase64
     )
-
     $pinfo = New-Object System.Diagnostics.ProcessStartInfo
     $pinfo.FileName = "node.exe"
     $pinfo.RedirectStandardError = $true
@@ -34,7 +34,6 @@ function Convert-ToHtml {
     do {
         Write-Host $p.StandardOutput.ReadLine();
     } while (!$p.HasExited)
-
     if ($p.ExitCode -eq 0) {
         return Join-Path -Path $Output -ChildPath ([System.IO.Path]::GetFileNameWithoutExtension($MarkdownFile) + ".html")
     }
@@ -55,6 +54,7 @@ try {
     $sourceFolder = If ($sourceFolder) { $sourceFolder } Else { Get-VstsInput -Name sourceFolder -Require }
     $contents = If ($contents) { $contents } Else { Get-VstsInput -Name contents -Require }
     $imgPath = If ($imgPath) { $imgPath } Else { Get-VstsInput -Name imgPath -Require }
+    $script = If ($script) { $script } Else { Get-VstsInput -Name script -Require }
     
     Import-Module -Name "$PSScriptRoot\ps_modules\AzureDevOps.SharePoint.Link.dll" -Force -Verbose
 
@@ -71,7 +71,12 @@ try {
     #get html contents
     $tmp = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "SpWiki"
     #clean out the folder
-    Remove-Item -Path "$($tmp)\*" -Filter "*.html" -Recurse
+    if (Test-Path $tmp) {
+        Remove-Item -Path "$($tmp)\*" -Filter "*.html" -Recurse
+    }
+    else {
+        New-Item -Path $tmp -ItemType Directory | Out-Null
+    }
 
     Foreach ($file in $files) {
         Write-Host $file
@@ -99,7 +104,7 @@ try {
             Set-Content -path $file.HtmlFile -value $content
         }
 
-        Write-SpWikiPage -ClientId  $clientId -ClientSecret $clientSecret -File $file.HtmlFile -ListId $listId -Url $url
+        Write-SpWikiPage -ClientId  $clientId -ClientSecret $clientSecret -File $file.HtmlFile -ListId $listId -Url $url -Script $script
     }
 }
 finally {
