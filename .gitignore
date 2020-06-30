@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 #extension package file
 *.vsix
+*sample.html

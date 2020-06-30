@@ -2,6 +2,10 @@ import path = require("path");
 import fs = require("fs");
 import MarkdownIt = require("markdown-it");
 import mdtl = require("markdown-it-task-lists");
+import markdownItAnchor = require("markdown-it-anchor");
+
+const hasProp = Object.prototype.hasOwnProperty;
+const slugs: { [propName: string]: any } = {};
 
 function run() {
   try {
@@ -76,7 +80,19 @@ function createMd(): MarkdownIt {
         '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
       );
     },
-  }).use(mdtl);
+  })
+    .use(mdtl)
+    .use(markdownItAnchor, {
+      slugify: (slug: string) => {
+        let uniq = slug;
+        let i = 1;
+        while (hasProp.call(slugs, uniq)) {
+          uniq = `${slug}-${i++}`;
+        }
+        slugs[uniq] = true;
+        return uniq;
+      },
+    });
   md.set;
   return md;
 }
