@@ -11,38 +11,6 @@ param(
 )
 
 
-
-function Convert-ToHtml {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$MarkdownFile,
-        [Parameter(Mandatory = $true)]
-        [string]$Output,
-        [bool] $ImgToBase64
-    )
-    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-    $pinfo.FileName = "node.exe"
-    $pinfo.RedirectStandardError = $true
-    $pinfo.RedirectStandardOutput = $true
-    $pinfo.UseShellExecute = $false
-    $pinfo.Arguments = "$PSScriptRoot/index.js $MarkdownFile $Output $ImgToBase64" 
-    $p = New-Object System.Diagnostics.Process
-    $p.StartInfo = $pinfo
-    $p.Start() | Out-Null
-    
-    do {
-        Write-Host $p.StandardOutput.ReadLine();
-    } while (!$p.HasExited)
-    if ($p.ExitCode -eq 0) {
-        return Join-Path -Path $Output -ChildPath ([System.IO.Path]::GetFileNameWithoutExtension($MarkdownFile) + ".html")
-    }
-    else {
-        Write-Error $p.StandardError.ReadToEnd()
-    }
-}
-
-
 Trace-VstsEnteringInvocation $MyInvocation
 $ErrorActionPreference = 'Stop'
 
@@ -57,8 +25,9 @@ try {
     $script = If ($script) { $script } Else { Get-VstsInput -Name script -Require }
     
     Import-Module -Name "$PSScriptRoot\ps_modules\AzureDevOps.SharePoint.Link.dll" -Force -Verbose
+    Import-Module -Name "$PSScriptRoot\ps_modules\Html-it.psm1" -Force -Verbose
 
-    $pattern = '(<img[^>]+src=")([^"]+)("[^>]*>)'
+
     $uri = new-object  System.Uri($url)
     $baseUrl = $uri.Scheme + '://' + $uri.Authority
     $imgPath = $baseUrl + $imgPath
@@ -86,37 +55,23 @@ try {
 
     #upload
     foreach ($file in $htmlFiles) {
-        $content = Get-Content $file.HtmlFile
+        $content = Get-Content $file.HtmlFile | Out-String
         if ($content) {
+            #replace the string {{date}} with the formatted date
+            $content = Convert-DateToken -Content $content
             if ($imgPath) {
-                $evalutor = {
-                    param($match)
-                        
-                    if ($match.groups[2].Value.StartsWith('http')) {
-                        return $match.groups[0].Value;
-                    }
-                    $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($file.FileName), $match.groups[2].Value))
-                    if (Test-Path $imgSrc) {
-                        Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $imgSrc -DocumentFolder $imgPath | Out-Null   
-                        return $match.groups[1].Value + $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value) + $match.groups[3].Value
-                    }
-                    else {
-                        Write-Warning $"Image $imgSrc was not found"
-                        return $match.groups[0].Value;
-                    }   
+                $result = Resolve-ImgPath -Content $content -ImgPath $imgPath  -RootPath ([System.IO.Path]::GetDirectoryName($file.FileName)) -Verbose
+                $content = $result.Content
+                foreach ($img in $result.Images) {
+                    Write-SpFile -ClientId  $clientId -ClientSecret $clientSecret -Url $url  -File $img -DocumentFolder $imgPath 
                 }
-                $content = [regex]::Replace($content, $pattern, $evalutor)
-                Set-Content -path $file.HtmlFile -value $content
-                
             }
-    
+            Set-Content -path $file.HtmlFile -value $content
             Write-SpWikiPage -ClientId  $clientId -ClientSecret $clientSecret -File $file.HtmlFile -ListId $listId -Url $url -Script $script
         }
         else {
             Write-Warning "$($file.FileName) is empty. File will not be uploaded."
         }
-        
-
     }
 }
 finally {
