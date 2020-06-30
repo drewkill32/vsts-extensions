@@ -6,11 +6,11 @@
   "description": "Uploads files to a SharePoint document library using a ClientId and Secret.",
   "helpMarkDown": "",
   "category": "Utility",
-  "author": "Drew Killion",
+  "author": "Nerd Monkey",
   "version": {
     "Major": 0,
-    "Minor": 2,
-    "Patch": 6
+    "Minor": 3,
+    "Patch": 0
   },
   "instanceNameFormat": "Upload files to SharePoint library $(documentFolder)",
   "inputs": [

@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "upload-sp-files-client-id",
   "name": "SharePoint File Upload with SharePoint app ClientId/Secret",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "publisher": "nerd-monkey",
   "targets": [
     {

@@ -53,6 +53,7 @@ function createMd(): MarkdownIt {
   // Actual default values
   const md = require("markdown-it")({
     html: true,
+    linkify: true,
     highlight: (str: string, lang: string) => {
       // Workaround for highlight not supporting tsx: https://github.com/isagalaev/highlight.js/issues/1155
       if (
@@ -63,12 +64,20 @@ function createMd(): MarkdownIt {
       }
       if (lang && hljs.getLanguage(lang)) {
         try {
-          return `<div>${hljs.highlight(lang, str, true).value}</div>`;
-        } catch (error) {}
+          return (
+            '<pre class="hljs"><code>' +
+            hljs.highlight(lang, str, true).value +
+            "</code></pre>"
+          );
+        } catch (__) {}
       }
-      return `<div>${md.utils.escapeHtml(str)}</div>`;
+
+      return (
+        '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
+      );
     },
   }).use(mdtl);
+  md.set;
   return md;
 }
 

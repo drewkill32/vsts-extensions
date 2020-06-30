@@ -6,11 +6,11 @@
   "description": "Uploads a wiki page to a SharePoint list using a ClientId and Secret.",
   "helpMarkDown": "",
   "category": "Utility",
-  "author": "Drew Killion",
+  "author": "Nerd Monkey",
   "version": {
     "Major": 0,
-    "Minor": 1,
-    "Patch": 5
+    "Minor": 2,
+    "Patch": 0
   },
   "instanceNameFormat": "Upload wikiPage to SharePoint list",
   "inputs": [
