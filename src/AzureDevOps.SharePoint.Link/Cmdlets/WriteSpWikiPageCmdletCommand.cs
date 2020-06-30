@@ -136,7 +136,7 @@ namespace AzureDevOps.SharePoint.Link.Cmdlets
             if (scriptWebPart != null)
             {
                 WriteVerbose("Web part found. replacing script content.");
-                scriptWebPart.WebPart.Properties["Content"] = escaped;
+                scriptWebPart.WebPart.Properties["Content"] = content;
                 scriptWebPart.SaveWebPartChanges();
                 cc.ExecuteQuery();
             }
