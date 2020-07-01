@@ -10,7 +10,7 @@
   "version": {
     "Major": 0,
     "Minor": 3,
-    "Patch": 0
+    "Patch": 2
   },
   "instanceNameFormat": "Upload wikiPage to SharePoint list",
   "inputs": [

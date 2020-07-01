@@ -95,7 +95,7 @@ function Resolve-ImgPath {
         return
     }
     $pattern = '(<img[^>]+src=")([^"]+)("[^>]*>)'
-    $imgs = @()
+    $imgs = New-Object System.Collections.Generic.List[System.String]
     $evalutor = {
         param($match)
         $match.groups[0].value    
@@ -104,7 +104,7 @@ function Resolve-ImgPath {
         }
         $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($RootPath, $match.groups[2].Value))
         if (Test-Path $imgSrc) {
-            $imgs += $imgSrc
+            $imgs.Add($imgSrc)
             $httpPath = $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value)
             Write-Verbose "Replacing $imgSrc with $httpPath"
             return $match.groups[1].Value + $httpPath + $match.groups[3].Value
@@ -114,7 +114,6 @@ function Resolve-ImgPath {
             return $match.groups[0].Value;
         }   
     }
-
     $replaced = [regex]::Replace($content, $pattern, $evalutor, 2) #2 = Multiline
     return @{Content = $replaced; Images = $imgs }
 }
