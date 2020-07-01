@@ -102,8 +102,7 @@ function Resolve-ImgPath {
         if ($match.groups[2].Value.StartsWith('http')) {
             return $match.groups[0].Value;
         }
-        
-        $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine([System.IO.Path]::GetDirectoryName($RootPath), $match.groups[2].Value))
+        $imgSrc = [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($RootPath, $match.groups[2].Value))
         if (Test-Path $imgSrc) {
             $imgs += $imgSrc
             $httpPath = $imgPath + '/' + [System.IO.Path]::GetFileName($match.Groups[2].Value)

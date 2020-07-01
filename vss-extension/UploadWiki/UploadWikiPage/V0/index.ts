@@ -84,10 +84,14 @@ function createMd(): MarkdownIt {
     .use(mdtl)
     .use(markdownItAnchor, {
       slugify: (slug: string) => {
-        let uniq = slug;
+        let orgSlug = slug
+          .toLowerCase()
+          .replace(/\s/g, "-")
+          .replace(/\u2122|\|/g, "");
+        let uniq = orgSlug;
         let i = 1;
         while (hasProp.call(slugs, uniq)) {
-          uniq = `${slug}-${i++}`;
+          uniq = `${orgSlug}-${i++}`;
         }
         slugs[uniq] = true;
         return uniq;
@@ -102,6 +106,7 @@ function relToAbsPath(fileName: string, href: string): string {
     return href;
   }
   // Otherwise look relative to the markdown file
+  console.log(path.dirname(fileName));
   return path.join(path.resolve(path.dirname(fileName)), href);
 }
 

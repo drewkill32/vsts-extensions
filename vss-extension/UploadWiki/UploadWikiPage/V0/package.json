@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsc && node ./index.js ../test/sample/sample.md ../test/output"
+    "dev": "tsc && node ./index.js D:\\Code\\STERIS.Docs\\docs\\SPMi\\ARi\\AttestJob.md ../test/output"
   },
   "keywords": [],
   "author": "",

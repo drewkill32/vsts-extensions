@@ -9,6 +9,7 @@ $htmlFile = Convert-ToHtml -MarkdownFile $env:MarkdownFile -Output $PSScriptRoot
 
 $content = Get-Content -Path $htmlFile | Out-String
 $content = Convert-DateToken -Content $content
+
 $result = Resolve-ImgPath -Content $content -ImgPath $env:ImgPath  -RootPath ([System.IO.Path]::GetDirectoryName($env:MarkdownFile)) -Verbose
 $result.Content
 

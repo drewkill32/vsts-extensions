@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "id": "upload-sp-wikipage-client-id",
   "name": "SharePoint Wiki Page Upload with SharePoint app ClientId/Secret",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "publisher": "nerd-monkey",
   "targets": [
     {

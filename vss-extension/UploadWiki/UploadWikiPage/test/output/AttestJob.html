@@ -1,0 +1,416 @@
+<sharepoint id='wikilink' page='AttestJob.aspx' />
+<div class='md-content'>
+<div id='created-outside-sharepoint'>This document was created outside of SharePoint. <a href='https://steriscorp.sharepoint.com/sites/SPMMicrosystems/Dev/Lists/Work/Outstanding%20by%20area.aspx'>Submit a Dev Request</a> to request changes.</div>
+<hr>
+<h1 id='title'>Attest Job</h1>
+<p>DRAFT</p>
+<div class='toc'>
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#3m-attest-auto-reader-490">3M Attest Auto-reader 490</a></li>
+<li><a href="#3m-attest-auto-reader-390">3M Attest Auto-reader 390</a></li>
+</ul>
+</li>
+<li><a href="#quick-start">Quick Start</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#job-versions">Job Versions</a></li>
+<li><a href="#job-version-upgrade-steps">Job Version Upgrade Steps</a></li>
+<li><a href="#auto-reader-setup">Auto-reader Setup</a>
+<ul>
+<li><a href="#connecting-using-a-static-ip-address">Connecting Using a Static IP Address</a></li>
+<li><a href="#verifying-connectivity">Verifying Connectivity</a></li>
+<li><a href="#spmi-setup">SPM<em>i</em> Setup</a></li>
+<li><a href="#spm-setup">SPM Setup</a></li>
+<li><a href="#3m390--3m490-attributes">3M390 | 3M490 Attributes</a></li>
+</ul>
+</li>
+<li><a href="#how-it-works">How It Works</a>
+<ul>
+<li><a href="#spm-notifications">SPM Notifications</a></li>
+</ul>
+</li>
+<li><a href="#heartbeat">Heartbeat</a>
+<ul>
+<li><a href="#incubatorstatus-mapping">IncubatorStatus Mapping</a></li>
+<li><a href="#example-attest-auto-reader-message">Example Attest Auto-reader Message</a></li>
+</ul>
+</li>
+<li><a href="#helpful-queries">Helpful Queries</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a>
+<ul>
+<li><a href="#spm-continues-to-prompt-the-user-to-confirm-the-same-message">SPM continues to prompt the user to confirm the same message</a>
+<ul>
+<li><a href="#problem">Problem</a></li>
+<li><a href="#cause">Cause</a></li>
+<li><a href="#fix">Fix</a></li>
+</ul>
+</li>
+<li><a href="#auto-reader-has-not-update-the-heartbeat-in-a-while">Auto-reader has not update the heartbeat in a while</a>
+<ul>
+<li><a href="#problem-1">Problem</a></li>
+<li><a href="#fix-1">Fix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#footnotes">Footnotes</a></li>
+</ul>
+</div>
+<div class='container'>
+<h2 id="introduction">Introduction</h2>
+<p>The <code>AttestJob</code> is designed to work with the 3M™ Attest™ Auto‑reader 490 and 3M™ Attest™ Auto‑reader 390. <code>AttestJob</code> will poll a web API for status updates at a specified interval. When there is an update SPM<em>i</em> will notify SPM, then SPM will alert the user of the change.</p>
+<h3 id="3m-attest-auto-reader-490">3M Attest Auto-reader 490</h3>
+<p>The 3M™ Attest™ Auto‑reader 490* is designed to incubate and automatically read 3M™ Attest™ Super Rapid Readout Biological Indicators, catalog numbers 1491 and 1492V, at 60°C for a final fluorescent result at 60 minutes. Other biological indicators (BIs) are not compatible with this device and cannot be used.</p>
+<p>This 24 minute Dual Auto reader features Any Well technology which means Attest™ 1491 or 1492V BIs and associated challenge packs (for steam) or Attest™ 1295 BIs  (for VH2O2 sterilization) can be incubated in any well of the Auto reader at the same time. Includes ethernet cable for web app connectivity.* Software version 4.2.7 or greater<a href="https://www.3m.com/3M/en_US/company-us/all-3m-products/~/3M-Attest-Auto-reader-490/?N=5002385+3289976268&amp;rt=rud#:~:text=The%203M%E2%84%A2%20Attest%E2%84%A2,device%20and%20cannot%20be%20used.">[1]</a></p>
+<h3 id="3m-attest-auto-reader-390">3M Attest Auto-reader 390</h3>
+<p>Auto reader for use with 3M™ Attest™ Rapid Readout Biological Indicators and Process Challenge Packs for Steam. Replaces the 3M™ Attest™ Auto reader 290. Includes ethernet cable for web app connectivity.</p>
+<p>The 3M™ Attest™ 390 Auto-reader for Steam reads the fluorescence produced by positive 3M™ Attest™ Rapid Readout Biological Indicators 1291 and 1292 to indicate a sterilization process failure. Featuring advanced electronics and backlit LCD panel, the 3M™ Attest™ Auto-reader 390 turns up the dial on reliability and accuracy. It gives you even more confidence in your efforts to ensure patient safety, while working with your existing 3M™ Attest™ Rapid Readout products.<a href="https://www.3m.com/3M/en_US/company-us/all-3m-products/~/3M-Attest-Auto-reader-390/?N=5002385+3294363972&amp;rt=rud">[2]</a></p>
+<h2 id="quick-start">Quick Start</h2>
+<ul>
+<li>In SPMInterfaceService.config add <code>AttestJob</code> to <code>ServicesToRun</code>. (Note <code>HttpJob</code> will work for backwards compatibility, but <code>AttestJob</code> should be used going forward, See <a href="#job-version-upgrade-steps">Job Version Upgrade Steps</a> for more information)</li>
+<li>Create Incubator(s) in SPM (Mgmt &gt;&gt; System Configuration &gt;&gt; Incubators) and link it to the interface computer.</li>
+</ul>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>SPM 2018.3.6 or higher is required.</li>
+<li>SPM<em>i</em> 2020.C or higher is required.</li>
+<li>Attest Auto-reader that supports 3M's Any-Well technology.</li>
+<li>Auto-reader must be connected to the network with a static IP Address</li>
+</ul>
+<div class="md-important">
+<p>Auto-readers with Any-well are only supported with SPM 2018.3.6 and later. If a customer has their Auto-reader updated with Any-well and they are still running an earlier version of SPM, they will not be able to interface the Auto-reader with SPM until they upgrade.</p>
+</div>
+<h2 id="job-versions">Job Versions</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Version</th>
+<th style="text-align:left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">V1</td>
+<td style="text-align:left">Initial Version. Named HttpJob. Should still be used for Auto-readers that do not support Any-well</td>
+</tr>
+<tr>
+<td style="text-align:center">V2</td>
+<td style="text-align:left">Support changes to Auto-reader settings without a SPM<em>i</em> service restart. Uses Job name <code>AttestJob</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="job-version-upgrade-steps">Job Version Upgrade Steps</h2>
+<p>SPM<em>i</em> will automatically upgrade to <strong>V2</strong> if <code>InterfaceVersion</code> is not explicitly specified in the attributes. On start up SPM<em>i</em> will find any records with a <code>DeviceType</code> equal to 3M390 or 3M490 and add <code>InterfaceVersion=V2</code> and <code>PollingIntervalInMS=2000</code> to the attributes. SPM<em>i</em> will use the <code>PollingIntervalInMS</code> in the <code>SPMInterfaceService.config</code> file if it exists.</p>
+<div class="md-important">
+<p>If an Auto-reader is not using Any-well then the version needs to be explicitly set to V1.</p>
+</div>
+<p>Example:</p>
+<pre class="hljs"><code>HttpJob(PollingIntervalInMs=5000&amp;amp;&amp;amp;exampleKey=exampleValue)
+</code></pre>
+<ul>
+<li>SPM<em>i</em> will only upgrade jobs where the <code>InterfaceVersion</code> is not explicitly specified.</li>
+<li>-To remain on V1 add an attribute <code>InterfaceVersion=V1</code> to the attest device record and restart the service.-</li>
+<li>The original name of <code>HttpJob</code> will still work with V2, but should be changed.</li>
+<li></li>
+</ul>
+<h2 id="auto-reader-setup">Auto-reader Setup</h2>
+<p>Before setup verify that the auto-reader is online and and the IP address is reachable from the server running SPM<em>i</em> and the the Auto-reader is using a static IP address. Work with the customer's IT department to ensure that the Auto-reader is set up on the network with a static IP Address.</p>
+<h3 id="connecting-using-a-static-ip-address">Connecting Using a Static IP Address</h3>
+<p>The use of a Static IP address is recommended. Certain set-up and configuration options are available on the password protected 3M™ Attest™ Auto-reader 390, 390G,490, and 490H Web App Configuration Page, including the option to assign a Static IP address. Using a portable router or Ethernet jack with a dynamic IP address, navigate to the Web App Configuration Page by entering either:</p>
+<ol>
+<li><a href="http://attestxxxxxx/protect/config.htm">http://attestxxxxxx/protect/config.htm</a> (where xxxxxx
+is the 6-digit unit serial number, obtained by pressing
+the button on the front of the Auto-reader and
+reading the 1st 6-digit string on the top line of the LCD
+display); or</li>
+<li><a href="http://xxx.xxx.xxx.xxx/protect/config.htm">http://xxx.xxx.xxx.xxx/protect/config.htm</a> (where xxx.
+<a href="http://xxx.xxx.xxx">xxx.xxx.xxx</a> is the IP address obtained by pressing the
+button twice and referring to the top row of the
+LCD screen).</li>
+</ol>
+<p>Enter the address into the web browser's address bar
+and press 'Go' or hit the enter key. A security screen will
+appear. Enter the following User name and Password:</p>
+<ul>
+<li>User name: manager</li>
+<li>Password: Attest</li>
+<li>Press ‘OK’</li>
+</ul>
+<p>Populate the fields of the Configuration Page applicable
+to establishing connectivity.</p>
+<h3 id="verifying-connectivity">Verifying Connectivity</h3>
+<p>After connecting the Auto-reader to a live Ethernet jack, press the button on the front of the Auto-reader twice to display the IP address on the Auto-reader LCD panel. Enter <a href="http://IPaddress">http://IPaddress</a> (e.g. <a href="http://xxx.xxx.xxx.xxx">http://xxx.xxx.xxx.xxx</a>) in the browser of a networked computer and press Enter. The 3M™ Attest™ Auto-reader Web App Status Page will display. See <a href="https://multimedia.3m.com/mws/media/900030O/3m-attest-auto-reader-connectivity-technical-specifications.pdf">3M™ Attest™ Auto-reader Connectivity Technical Specifications</a> for more information.</p>
+<h3 id="spmi-setup">SPM<em>i</em> Setup</h3>
+<p>After installing SPM<em>i</em> add <code>AttestJob</code> to <code>ServicesToRun</code> node in the <code>SPMInterfaceService.config</code> file. SPM<em>i</em> will start interfacing any Auto-readers in the <code>Device</code> table with a <code>DeviceType</code> of 3M390 or 3M490.</p>
+<h3 id="spm-setup">SPM Setup</h3>
+<p>Auto-readers do not need to be setup directly in the <code>Device</code> table. Instead Auto-readers are setup inside of SPM.<a href="#spm-setup">SPM Setup</a></p>
+<h3 id="3m390--3m490-attributes">3M390 | 3M490 Attributes</h3>
+<p>All of the settings required for the Auto-reader can be set inside of SPM. Follow the instructions for</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Example</th>
+<th style="text-align:center">Required</th>
+<th>Notes</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LeftBankBITestType</td>
+<td>;2;3;4</td>
+<td style="text-align:center">yes</td>
+<td>Contains a semi-colon delimited list of <code>[TestTypes].[Id]</code> each Id will match a record in the <code>TestType</code> table.</td>
+<td></td>
+</tr>
+<tr>
+<td>RightBankBITestType</td>
+<td>;2;3;4</td>
+<td style="text-align:center">yes</td>
+<td>Contains a semi-colon delimited list of <code>[TestTypes].[Id]</code> each Id will match a record in the <code>TestType</code> table.</td>
+<td></td>
+</tr>
+<tr>
+<td>IsInterfaced</td>
+<td>true</td>
+<td style="text-align:center">yes</td>
+<td>Determines if the Auto-reader should be interfaced.</td>
+<td></td>
+</tr>
+<tr>
+<td>DisplayWorkstationID</td>
+<td>2000</td>
+<td style="text-align:center">yes</td>
+<td>Matches the <code>[Device].[Id]</code> of the computer to display messages with the Auto-reader.</td>
+<td></td>
+</tr>
+<tr>
+<td>SerialNumber</td>
+<td>12345</td>
+<td style="text-align:center">no</td>
+<td>The Serial number of the Auto-reader. Not used by SPM<em>i</em>. Only used a reference.</td>
+<td></td>
+</tr>
+<tr>
+<td>IPAddress</td>
+<td>192.168.0.1</td>
+<td style="text-align:center">yes</td>
+<td>the IP address of the Auto-reader SPM<em>i</em> uses the IP address to poll the Auto-reader for updates. Url setting can be used to override the IP Address</td>
+<td></td>
+</tr>
+<tr>
+<td>SecondsUntilForcedStatusRefresh</td>
+<td>60</td>
+<td style="text-align:center">no</td>
+<td>No longer used. Added by SPM for legacy 3M290 Auto-readers.</td>
+<td></td>
+</tr>
+<tr>
+<td>Comport</td>
+<td>Com4</td>
+<td style="text-align:center">no</td>
+<td>No longer used. Added by SPM for legacy 3M290 Auto-readers which connected through a COM port.</td>
+<td></td>
+</tr>
+<tr>
+<td>OptionalWellNumber</td>
+<td>false</td>
+<td style="text-align:center">no</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TreatBanksAsEqual</td>
+<td>false</td>
+<td style="text-align:center">no</td>
+<td>Left and right wells can accept the same types of BIs and any BI with the test types listed in either the Left bank BI test type(s) or Right bank BI test type(s) fields can be incubated in any well.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Additional settings that are not settable with SPM.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Example</th>
+<th style="text-align:center">Required</th>
+<th>Notes</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Url</td>
+<td><a href="http://192.168.0.1/Status.xml">http://192.168.0.1/Status.xml</a></td>
+<td style="text-align:center">no</td>
+<td>Optional setting to the specific url that SPM<em>i</em> polls for data. If set the IPAddress settings will be ignored. Not commonly used.</td>
+<td></td>
+</tr>
+<tr>
+<td>Version</td>
+<td>V2</td>
+<td style="text-align:center">yes</td>
+<td>The version of AttestJob. This settings will be added by SPM<em>i</em> on first startup if it does not exist.</td>
+<td>V2</td>
+</tr>
+<tr>
+<td>PollingIntervalInMs</td>
+<td>2000</td>
+<td style="text-align:center">no</td>
+<td>The time in milliseconds to wait in between polling the Auto-reader status url.</td>
+<td>2000</td>
+</tr>
+<tr>
+<td>HeartbeatUpdateInterval</td>
+<td>1 min</td>
+<td style="text-align:center">no</td>
+<td>The interval to update heartbeat. Heartbeat data is recorded in the <code>InterfaceStatus</code> table</td>
+<td>1 min</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-works">How It Works</h2>
+<p>SPM<em>i</em> will poll the status Url of the Auto-reader for changes. If there are any changes SPM<em>i</em> will update the <code>IncubatorStatus</code> table with the changes. If a record does not match the <code>AutoReaderDeviceId</code> and <code>Well</code> it will be created. When SPM<em>i</em> starts up for the first time it will update all records regardless if there are any changes. While SPM<em>i</em> is running the AttestJob will only update records where there is a change.</p>
+<h3 id="spm-notifications">SPM Notifications</h3>
+<p>SPM will alert the display workstation if the following conditions are met:</p>
+<ul>
+<li>There is a new incubation. new incubation is defined when the well transitions from +,-, or ''  to a number.</li>
+<li>An incubation is completed. completed is defined as well transitions from incubating to + or -</li>
+<li>A well has a status is an error. Error is defined by a status starting with 'E'</li>
+</ul>
+<p>SPM changes it's action depending on what the user is doing in SPM. If SPM is expecting a new incubation will change from the waiting status to confirm incubation. If SPM is not expecting a new incubation a toast message will pop up alerting the user that an unexpected BI was inserted and to remove the BI.</p>
+<p>Unexpected</p>
+<p><img src="../../../assets/img/attest-new-unexpected.png" alt="attest-new-unexpected"></p>
+<p>If the status is a completion. SPM will display a toast asking the user to confirm the results. The toast message is will differ depending on if the well is linked to a sterilizer test.</p>
+<p>Completed linked</p>
+<p><strong>BI</strong></p>
+<p><img src="../../../assets/img/attest-completed-linked-bi.png" alt="attest-completed-linked"></p>
+<p><strong>Control</strong></p>
+<p><img src="../../../assets/img/attest-completed-linked-control.png" alt="attest-completed-linked"></p>
+<p>If the the status an error. SPM will alert the user that the incubator needs attention.</p>
+<p><strong>Error</strong></p>
+<p><img src="../../../assets/img/attest-bi-requires-attention.png" alt="attest-error"></p>
+<h2 id="heartbeat">Heartbeat</h2>
+<p>SPMi will update the heartbeat at the <code>HeartbeatUpdateInterval</code> defined in the setting (default: one minute). The heartbeat service updates the <code>[InterfaceStatus]</code> table with the <code>InterfaceName</code> (default: DeviceName [Id] ), <code>Modified Date</code> and <code>CurrentError</code> if any. If the <code>CurrentError</code> field is blank, it means there is no error and the interface is functioning correctly since the last modified date. the <code>ModifiedDate</code> is stored in UTC time. If the modified date is older than the <code>HeartbeatUpdateInterval</code> (give or take a few seconds) it means that the interface is not running or some other error preventing the interface from running.</p>
+<h3 id="incubatorstatus-mapping">IncubatorStatus Mapping</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">FieldName</th>
+<th style="text-align:left">Value</th>
+<th style="text-align:left">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">AutoReaderDeviceID</td>
+<td style="text-align:left"><a href="http://Device.Id">Device.Id</a></td>
+<td style="text-align:left"><a href="http://Device.Id">Device.Id</a> of the Auto-reader in the <code>[Device]</code> table</td>
+</tr>
+<tr>
+<td style="text-align:left">Well</td>
+<td style="text-align:left">repsonse\well{x}</td>
+<td style="text-align:left">The well number matching the value from the XML. Zero-based, well1 = 0, well2 = 1, etc...</td>
+</tr>
+<tr>
+<td style="text-align:left">Status</td>
+<td style="text-align:left">response\well{x}.value</td>
+<td style="text-align:left">value inside of the well node.</td>
+</tr>
+<tr>
+<td style="text-align:left">ReadingDone</td>
+<td style="text-align:left">N/A</td>
+<td style="text-align:left">Obsolete</td>
+</tr>
+<tr>
+<td style="text-align:left">LastUpdate</td>
+<td style="text-align:left">DateTime.UtcNow</td>
+<td style="text-align:left">The date that the last well was updated in UTC</td>
+</tr>
+<tr>
+<td style="text-align:left">IncubationStartTime</td>
+<td style="text-align:left">DateTime.UtcNow</td>
+<td style="text-align:left">The date that the last well was updated in UTC</td>
+</tr>
+<tr>
+<td style="text-align:left">SterTestId</td>
+<td style="text-align:left"><a href="http://SterTest.Id">SterTest.Id</a></td>
+<td style="text-align:left">The Id of the SterTest from the <code>[SterTest]</code> table. Will be linked by SPM from sterilizer load or BO &amp; controls</td>
+</tr>
+<tr>
+<td style="text-align:left">ExpectedCompletionTime</td>
+<td style="text-align:left">N/A</td>
+<td style="text-align:left">Obsolete</td>
+</tr>
+<tr>
+<td style="text-align:left">BankType</td>
+<td style="text-align:left">N/A</td>
+<td style="text-align:left">Obsolete</td>
+</tr>
+<tr>
+<td style="text-align:left">Temperature</td>
+<td style="text-align:left">response\curTime</td>
+<td style="text-align:left">The value is logged in the table but not used by SPM or SPM<em>i</em></td>
+</tr>
+<tr>
+<td style="text-align:left">SerialNumber</td>
+<td style="text-align:left">response\serialNumber</td>
+<td style="text-align:left">The value is logged in the table but not used by SPM or SPM<em>i</em></td>
+</tr>
+<tr>
+<td style="text-align:left">Confirmed</td>
+<td style="text-align:left">0 or 1</td>
+<td style="text-align:left">Used by SPM to determine if the completed result is confirmed by as user.</td>
+</tr>
+<tr>
+<td style="text-align:left">ExternalBiId</td>
+<td style="text-align:left">N/A</td>
+<td style="text-align:left">Not used by Attest Auto-reader.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-attest-auto-reader-message">Example Attest Auto-reader Message</h3>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">response</span> <span class="hljs-attr">xmlns:xsi</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="hljs-attr">xmlns:xsd</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well1</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">well1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well2</span>&gt;</span>-<span class="hljs-tag">&lt;/<span class="hljs-name">well2</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well3</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">well3</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well4</span>&gt;</span>40<span class="hljs-tag">&lt;/<span class="hljs-name">well4</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well5</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">well5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well6</span>&gt;</span>E1<span class="hljs-tag">&lt;/<span class="hljs-name">well6</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well7</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">well7</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well8</span>&gt;</span>+<span class="hljs-tag">&lt;/<span class="hljs-name">well8</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well9</span>&gt;</span>*<span class="hljs-tag">&lt;/<span class="hljs-name">well9</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">well10</span>&gt;</span> <span class="hljs-tag">&lt;/<span class="hljs-name">well10</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">autoreaderleft</span>&gt;</span>ATTEST<span class="hljs-tag">&lt;/<span class="hljs-name">autoreaderleft</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">autoreaderright</span>&gt;</span>ATTEST<span class="hljs-tag">&lt;/<span class="hljs-name">autoreaderright</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">currentTime</span>&gt;</span>2020-06-17 11:49<span class="hljs-tag">&lt;/<span class="hljs-name">currentTime</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">curTemp</span>&gt;</span>60.0<span class="hljs-tag">&lt;/<span class="hljs-name">curTemp</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">serialnumber</span>&gt;</span>12345<span class="hljs-tag">&lt;/<span class="hljs-name">serialnumber</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">response</span>&gt;</span>
+</code></pre>
+<h2 id="helpful-queries">Helpful Queries</h2>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="spm-continues-to-prompt-the-user-to-confirm-the-same-message">SPM continues to prompt the user to confirm the same message</h3>
+<h4 id="problem">Problem</h4>
+<p>SPM will continue to alert the user if a well have a final result (+ or -) and the confirmed status is false. In some cases where the well was never linked to a SterTest SPM will never mark the well as confirmed even when the user attempts to confirm the results.</p>
+<h4 id="cause">Cause</h4>
+<p>The most likely cause it that an Auto-reader reported a confirmed result that was not linked to a Ster Test. This can happen if the user never linked the BI when the incubation started</p>
+<h4 id="fix">Fix</h4>
+<p>If the BI should be linked to a Ster Test in SPM, then  the BI can linked from the BIs &amp; Controls screen. Once the BI is linked confirming the toast message will not create any additional prompts.</p>
+<p>Another way this can be fixed is to change the <code>Confirmed</code> field to true (1) in the database directly. It is recommended that the first fix is attempted if possible.</p>
+<h3 id="auto-reader-has-not-update-the-heartbeat-in-a-while">Auto-reader has not update the heartbeat in a while</h3>
+<h4 id="problem-1">Problem</h4>
+<p>The record for the Auto-reader in <code>[InterfaceStatus]</code> has not been updated since the last <code>HeartbeatUpdateInterval</code>.</p>
+<h4 id="fix-1">Fix</h4>
+<ul>
+<li>Verify that SPM<em>i</em> is running and <code>AttestJob</code> is configured to run.</li>
+<li>Check the Auto-reader State field to make sure that the auto-reader is active.</li>
+</ul>
+</div>
+<h2 id="footnotes">Footnotes</h2>
+<hr>
+<div id='last-changed-footer'>Last Changed: {{date}}</div>
+</div>
